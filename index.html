@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <table id="productsTable">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Rodzaj</th>
+                    <th>Ilość</th>
+                </tr>
+            </thead>
+            <tbody id="productsContainer">
+                <!-- Tutaj będą wyświetlane produkty -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Import Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.3/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAStTx_Gu9vmvSokG3-2vBipOrRvn0G50",
+            authDomain: "psm---app.firebaseapp.com",
+            projectId: "psm---app",
+            storageBucket: "psm---app.appspot.com",
+            messagingSenderId: "775420835556",
+            appId: "1:775420835556:web:4f004b05167b72c7961ef1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Funkcja do pobierania i wyświetlania produktów
+        async function getProducts() {
+            const productsCol = collection(db, 'products');
+            const productSnapshot = await getDocs(productsCol);
+
+            // Pobieramy referencję do kontenera tabeli
+            const tableBody = document.getElementById('productsContainer');
+
+            productSnapshot.forEach((doc) => {
+                const productData = doc.data();
+                const productName = productData.name;
+                const productType = productData.type;
+                const productAmount = productData.amount;
+
+                // Tworzymy wiersz tabeli
+                const row = document.createElement('tr');
+
+                // Tworzymy komórki i ustawiamy ich zawartość
+                const nameCell = document.createElement('td');
+                nameCell.textContent = productName;
+                row.appendChild(nameCell);
+
+                const typeCell = document.createElement('td');
+                typeCell.textContent = productType;
+                row.appendChild(typeCell);
+
+                const amountCell = document.createElement('td');
+                amountCell.textContent = productAmount;
+                row.appendChild(amountCell);
+
+                // Dodajemy wiersz do kontenera tabeli
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Wywołujemy funkcję po załadowaniu strony
+        window.onload = getProducts;
+    </script>
+</body>
+</html>
